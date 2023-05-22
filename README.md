@@ -2,7 +2,7 @@
 
 
 ## Getting Started
-Untuk membuka aplikasi ini, jalankan perintah berikut
+To run this project
 ```
 npm install
 npm start
