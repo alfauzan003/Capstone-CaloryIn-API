@@ -1,14 +1,10 @@
 var express = require('express');
 var router = express.Router();
-const admin = require('firebase-admin');
-const credentials = require('../serviceaccount.json');
-
-admin.initializeApp({
-  credential: admin.credential.cert(credentials)
-});
+const admin = require('../config/firebase-config');
+const auth = require('../middleware/auth');
 
 /* GET users listing. */
-router.get('/', function(req, res, next) {
+router.get('/', auth.verifyLogin, function(req, res, next) {
   async function getUsers() {
     const snapshot = await admin.firestore().collection('users').get();
     const users = snapshot.docs.map(doc => doc.data());
@@ -18,7 +14,7 @@ router.get('/', function(req, res, next) {
 });
 
 // Create Document ID same as firebase auth UID
-router.post('/register', async (req, res, next) => {
+router.post('/register', auth.verifyLogin, async (req, res, next) => {
   async function createUser() {
     const user={
       uid: req.body.uid,
@@ -31,7 +27,7 @@ router.post('/register', async (req, res, next) => {
 });
 
 // Get user by UID
-router.get('/:uid', async (req, res, next) => {
+router.get('/:uid', auth.verifyLogin, async (req, res, next) => {
   async function getUser() {
     const snapshot = await admin.firestore().collection('users').doc(req.params.uid).get();
     const user = snapshot.data();
