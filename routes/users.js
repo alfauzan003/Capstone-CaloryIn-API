@@ -14,7 +14,7 @@ router.get('/', auth.verifyLogin, function(req, res, next) {
 });
 
 // Create Document ID same as firebase auth UID
-router.post('/register', auth.verifyLogin, async (req, res, next) => {
+router.post('/register', async (req, res, next) => {
   async function createUser() {
     const user={
       uid: req.body.uid,
