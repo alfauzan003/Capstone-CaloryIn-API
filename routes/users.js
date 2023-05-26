@@ -16,10 +16,14 @@ router.get('/', auth.verifyLogin, function (req, res, next) {
 // Create Document ID same as firebase auth UID
 router.post('/register', async (req, res, next) => {
   async function createUser() {
+    const date = new Date(req.body.birthDate)
     const user = {
       uid: req.body.uid,
       name: req.body.name,
-      email: req.body.email
+      email: req.body.email,
+      birthDate: date,
+      height: req.body.height,
+      weight: req.body.weight,
     }
     await admin
       .firestore()

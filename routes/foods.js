@@ -45,8 +45,8 @@ router.get('/data', auth.verifyLogin, async (req, res, next) => {
   }
 })
 
-//Add Data to database
-router.post('/records', auth.verifyLogin, async (req, res, next) => {
+//Add record by UID
+router.post('/records/:uid', auth.verifyLogin, async (req, res, next) => {
   try {
     const foods = {
       food: req.body.food
@@ -58,7 +58,6 @@ router.post('/records', auth.verifyLogin, async (req, res, next) => {
     const date = new Date()
     console.log(response.data)
     const dataFood = {
-      idRecords: generateString(6),
       nameFood: response.data.foods[1].description,
       dateTime: date,
       protein: response.data.foods[1].foodNutrients[0].value,
@@ -69,7 +68,7 @@ router.post('/records', auth.verifyLogin, async (req, res, next) => {
     await admin
       .firestore()
       .collection('users')
-      .doc('124')
+      .doc(req.params.uid)
       .collection('records')
       .doc()
       .set(dataFood)
@@ -80,15 +79,22 @@ router.post('/records', auth.verifyLogin, async (req, res, next) => {
   }
 })
 
-// Get All records
-router.get('/records', auth.verifyLogin, function (req, res, next) {
+// Get All records by UID
+router.get('/records/:uid', auth.verifyLogin, function (req, res, next) {
+  const page = Number(req.query.page) || 1;
+  const limit = Number(req.query.limit) || 6;
+  const offset = (page - 1) * limit;
+
   let arrayJson = []
-  async function getUsers() {
+  async function getRecord() {
     const snapshot = await admin
       .firestore()
       .collection('users')
-      .doc('124')
+      .doc(req.params.uid)
       .collection('records')
+      .orderBy('dateTime', 'desc')
+      .limit(limit)
+      .offset(offset)
       .get()
     snapshot.docs.forEach((doc) => {
       const finalData = {
@@ -107,7 +113,31 @@ router.get('/records', auth.verifyLogin, function (req, res, next) {
     })
     return arrayJson
   }
-  getUsers().then((user) => res.send(user))
+  getRecord().then((user) => res.send(user))
+})
+
+// GET specific record by UID
+router.get('/records/:uid/:recordId', auth.verifyLogin, function (req, res, next) {
+  async function getRecord() {
+    const snapshot = await admin
+      .firestore()
+      .collection('users')
+      .doc(req.params.uid)
+      .collection('records')
+      .doc(req.params.recordId)
+      .get()
+    const finalData = {
+      reocrdId: snapshot.id,
+      nameFood: snapshot.data().nameFood,
+      dateRecord: snapshot.data().dateTime,
+      protein: snapshot.data().protein,
+      calory: snapshot.data().Calory,
+      lipid: snapshot.data().lipid,
+      carbohydrate: snapshot.data().Carbohydrate
+    }
+    return finalData
+  }
+  getRecord().then((user) => res.send(user))
 })
 
 module.exports = router
