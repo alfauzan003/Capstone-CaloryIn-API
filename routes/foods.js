@@ -4,19 +4,6 @@ const auth = require('../middleware/auth')
 const admin = require('../config/firebase-config')
 const { default: axios } = require('axios')
 
-const characters =
-  'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
-
-function generateString(length) {
-  let result = ' '
-  const charactersLength = characters.length
-  for (let i = 0; i < length; i++) {
-    result += characters.charAt(Math.floor(Math.random() * charactersLength))
-  }
-
-  return result
-}
-
 /* GET food data by request body. */
 router.get('/', auth.verifyLogin, async (req, res, next) => {
   try {
@@ -58,6 +45,7 @@ router.get('/data', auth.verifyLogin, async (req, res, next) => {
   }
 })
 
+//Add Data to database
 router.post('/records', auth.verifyLogin, async (req, res, next) => {
   try {
     const foods = {
@@ -91,4 +79,35 @@ router.post('/records', auth.verifyLogin, async (req, res, next) => {
     next(err)
   }
 })
+
+// Get All records
+router.get('/records', auth.verifyLogin, function (req, res, next) {
+  let arrayJson = []
+  async function getUsers() {
+    const snapshot = await admin
+      .firestore()
+      .collection('users')
+      .doc('124')
+      .collection('records')
+      .get()
+    snapshot.docs.forEach((doc) => {
+      const finalData = {
+        reocrdId: doc.id,
+        nameFood: doc.data().nameFood,
+        dateRecord: doc.data().dateTime,
+        protein: doc.data().protein,
+        calory: doc.data().Calory,
+        lipid: doc.data().lipid,
+        carbohydrate: doc.data().Carbohydrate
+      }
+      arrayJson.push(finalData)
+      console.log(doc.id)
+      const test = doc.data().dateTime
+      console.log(typeof test)
+    })
+    return arrayJson
+  }
+  getUsers().then((user) => res.send(user))
+})
+
 module.exports = router
