@@ -51,7 +51,10 @@ router.get('/:uid', auth.verifyLogin, async (req, res, next) => {
       const finalProfile = {
         uid: data.data().uid,
         name: data.data().name,
-        email: data.data().email
+        email: data.data().email,
+        birthDate: data.data().birthDate,
+        height: data.data().height,
+        weight: data.data().weight,
       }
       arrayProfile.push(finalProfile)
     })
