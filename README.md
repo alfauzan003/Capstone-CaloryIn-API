@@ -10,12 +10,14 @@ npm start
 
 ## Endpoint
 ```
-localhost:3000/
-localhost:3000/users
-localhost:3000/users/register
-localhost:3000/users/{uid}
+POST localhost:3000/register
+GET localhost:3000/users/:uid
+GET localhost:3000/update/:uid
 
-localhost:3000/foods
+POST localhost:3000/records/:uid
+GET localhost:3000/records/:uid
+GET localhost:3000/records/:uid/:recordId
+GET localhost:3000/records/:uid/date/:date
 ```
 
 ## ID Token
