@@ -12,7 +12,7 @@ npm start
 ```
 POST localhost:3000/register
 GET localhost:3000/users/:uid
-GET localhost:3000/update/:uid
+PUT localhost:3000/update/:uid
 
 POST localhost:3000/records/:uid
 GET localhost:3000/records/:uid
