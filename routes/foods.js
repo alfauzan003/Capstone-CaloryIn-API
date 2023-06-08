@@ -112,11 +112,13 @@ router.post('/records/:uid', auth.verifyLogin, async (req, res, next) => {
       }
     }
     for (var i = 0; i < jsonData.foods[0].foodNutrients.length; i++) {
-      if (jsonData.foods[0].foodNutrients[i].nutrientName == 'Fiber, total dietary') {
+      if (
+        jsonData.foods[0].foodNutrients[i].nutrientName ==
+        'Fiber, total dietary'
+      ) {
         var fiberId = i
       }
     }
-
 
     const dataFood = {
       nameFood: req.body.food,
@@ -244,100 +246,106 @@ router.get(
   }
 )
 // get Dashboard data
-router.get(
-  '/dashboard/:uid',
-  auth.verifyLogin,
-  function (req, res, next) {
-    let todayDate = getDate()
-    let totalCalory = 0
-    let totalFat = 0
-    let totalCarbohydrate = 0
-    let totalProtein = 0
+router.get('/dashboard/:uid', auth.verifyLogin, function (req, res, next) {
+  let todayDate = getDate()
+  let totalCalory = 0
+  let totalFat = 0
+  let totalCarbohydrate = 0
+  let totalProtein = 0
+  let totalFiber = 0
 
-    let percCalory
-    let percCarbohydrate
-    let percProtein
-    let percFat
+  let percCalory
+  let percCarbohydrate
+  let percProtein
+  let percFat
+  let percFiber
 
-    let totalNutrientsNeeds
-    let totalNutrients
-    async function getRecord() {
-      const snapshot = await admin
-        .firestore()
-        .collection('users')
-        .doc(req.params.uid)
-        .collection('records')
-        .where('dateRecord', '==', todayDate)
-        .get()
-      let arrayJson = []
-      snapshot.docs.forEach((doc) => {
-        totalCalory = totalCalory + doc.data().Calory
-        totalFat = totalFat + doc.data().lipid
-        totalProtein = totalProtein + doc.data().protein
-        totalCarbohydrate = totalCarbohydrate + doc.data().Carbohydrate
-        const finalData = {
-          recordId: doc.id,
-          nameFood: doc.data().nameFood,
-          dateRecord: doc.data().dateRecord,
-          protein: doc.data().protein,
-          calory: doc.data().Calory,
-          lipid: doc.data().lipid,
-          carbohydrate: doc.data().Carbohydrate,
-          fiber: doc.data().fiber,
-          imageURL: doc.data().imageURL
-        }
-
-        arrayJson.push(finalData)
-      })
-      // console.log('Total Calory: ' + totalCalory)
-      // console.log('Total Carbohydrate: ' + totalCarbohydrate)
-      // console.log('Total Protein: ' + totalProtein)
-      // console.log('Total Fat: ' + totalFat)
-      const profileSnapshot = await admin.firestore().collection('users').get()
-
-      let arrayProfile = []
-      profileSnapshot.docs.forEach((document) => {
-        // console.log(req.params.uid)
-        // console.log(document.id)
-        if (document.id == req.params.uid) {
-          console.log(profileSnapshot.size)
-          percCalory = (totalCalory / document.data().caloryNeed) * 100
-          percCarbohydrate =
-            (totalCarbohydrate / document.data().carbohydrateNeed) * 100
-          percProtein = (totalProtein / document.data().proteinNeed) * 100
-          percFat = (totalFat / document.data().fatNeed) * 100
-
-          totalNutrientsNeeds =
-            document.data().caloryNeed +
-            document.data().carbohydrateNeed +
-            document.data().proteinNeed +
-            document.data().fatNeed
-
-          totalNutrients =
-            ((totalCalory + totalCarbohydrate + totalFat + totalProtein) /
-              totalNutrientsNeeds) *
-            100
-        }
-      })
-
-      console.log(totalNutrientsNeeds)
-      const finalDashboardData = {
-        date: todayDate,
-        caloryPerc: percCalory,
-        carbohydratePerc: percCarbohydrate,
-        proteinPerc: percProtein,
-        fatPerc: percFat,
-        currentNutrientsPerc: totalNutrients
+  let totalNutrientsNeeds
+  let totalNutrients
+  async function getRecord() {
+    const snapshot = await admin
+      .firestore()
+      .collection('users')
+      .doc(req.params.uid)
+      .collection('records')
+      .where('dateRecord', '==', todayDate)
+      .get()
+    let arrayJson = []
+    snapshot.docs.forEach((doc) => {
+      totalCalory = totalCalory + doc.data().Calory
+      totalFat = totalFat + doc.data().lipid
+      totalProtein = totalProtein + doc.data().protein
+      totalCarbohydrate = totalCarbohydrate + doc.data().Carbohydrate
+      totalFiber = totalFiber + doc.data().fiber
+      const finalData = {
+        recordId: doc.id,
+        nameFood: doc.data().nameFood,
+        dateRecord: doc.data().dateRecord,
+        protein: doc.data().protein,
+        calory: doc.data().Calory,
+        lipid: doc.data().lipid,
+        carbohydrate: doc.data().Carbohydrate,
+        fiber: doc.data().fiber,
+        imageURL: doc.data().imageURL
       }
-      console.log(percCalory)
-      console.log(percCarbohydrate)
-      console.log(percProtein)
-      console.log(percFat)
-      return finalDashboardData
+
+      arrayJson.push(finalData)
+    })
+    // console.log('Total Calory: ' + totalCalory)
+    // console.log('Total Carbohydrate: ' + totalCarbohydrate)
+    // console.log('Total Protein: ' + totalProtein)
+    // console.log('Total Fat: ' + totalFat)
+    const profileSnapshot = await admin.firestore().collection('users').get()
+
+    let arrayProfile = []
+    profileSnapshot.docs.forEach((document) => {
+      // console.log(req.params.uid)
+      // console.log(document.id)
+      if (document.id == req.params.uid) {
+        // console.log(document.data().fiberNeed)
+        percCalory = (totalCalory / document.data().caloryNeed) * 100
+        percCarbohydrate =
+          (totalCarbohydrate / document.data().carbohydrateNeed) * 100
+        percProtein = (totalProtein / document.data().proteinNeed) * 100
+        percFat = (totalFat / document.data().fatNeed) * 100
+        percFiber = (totalFiber / document.data().fiberNeed) * 100
+
+        totalNutrientsNeeds =
+          document.data().caloryNeed +
+          document.data().carbohydrateNeed +
+          document.data().proteinNeed +
+          document.data().fatNeed +
+          document.data().fiberNeed
+
+        totalNutrients =
+          ((totalCalory +
+            totalCarbohydrate +
+            totalFat +
+            totalProtein +
+            totalFiber) /
+            totalNutrientsNeeds) *
+          100
+      }
+    })
+    console.log(totalNutrientsNeeds)
+    const finalDashboardData = {
+      date: todayDate,
+      caloryPerc: percCalory,
+      carbohydratePerc: percCarbohydrate,
+      proteinPerc: percProtein,
+      fatPerc: percFat,
+      fiberPerc: percFiber,
+      currentNutrientsPerc: totalNutrients
     }
-    getRecord().then((user) => res.send(user))
+    // console.log(percCalory)
+    // console.log(percCarbohydrate)
+    // console.log(percProtein)
+    // console.log(percFat)
+    // console.log(percFiber)
+    return finalDashboardData
   }
-)
+  getRecord().then((user) => res.send(user))
+})
 
 function getDate() {
   let date_time = new Date()
