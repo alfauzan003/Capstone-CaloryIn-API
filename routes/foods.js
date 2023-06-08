@@ -231,7 +231,7 @@ router.get(
     getRecord().then((user) => res.send(user))
   }
 )
-
+// get Dashboard data
 router.get(
   '/records/:uid/dashboard',
   auth.verifyLogin,
