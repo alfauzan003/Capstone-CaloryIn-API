@@ -63,8 +63,8 @@ router.get('/data', auth.verifyLogin, async (req, res, next) => {
       nameFood: response.data.foods[0].description,
       protein: response.data.foods[0].foodNutrients[proteinId].value,
       lipid: response.data.foods[0].foodNutrients[lipidId].value,
-      Carbohydrate: response.data.foods[0].foodNutrients[carbohydrateId].value,
-      Calory: response.data.foods[0].foodNutrients[caloryId].value
+      carbohydrate: response.data.foods[0].foodNutrients[carbohydrateId].value,
+      calory: response.data.foods[0].foodNutrients[caloryId].value
     }
     res.send(dataFood)
   } catch (err) {
@@ -120,14 +120,47 @@ router.post('/records/:uid', auth.verifyLogin, async (req, res, next) => {
       }
     }
 
+    // check if foodNutrients is exist
+
+    if (response.data.foods[0].foodNutrients[proteinId].value) {
+      var protein = response.data.foods[0].foodNutrients[proteinId].value
+    } else {
+      var protein = 0
+    }
+
+    if (response.data.foods[0].foodNutrients[lipidId].value) {
+      var lipid = response.data.foods[0].foodNutrients[lipidId].value
+    } else {
+      var lipid = 0
+    }
+
+    if (response.data.foods[0].foodNutrients[carbohydrateId].value) {
+      var carbohydrate = response.data.foods[0].foodNutrients[carbohydrateId].value 
+    } else {
+      var carbohydrate = 0
+    }
+
+    if (response.data.foods[0].foodNutrients[caloryId].value) {
+      var calory = response.data.foods[0].foodNutrients[caloryId].value
+    } else {
+      var calory = 0
+    }
+
+    if (response.data.foods[0].foodNutrients[fiberId].value) {
+      var fiber = response.data.foods[0].foodNutrients[fiberId].value
+    } else {
+      var fiber = 0
+    }
+
+
     const dataFood = {
       nameFood: req.body.food,
       dateRecord: foods.dateRecord,
-      protein: response.data.foods[0].foodNutrients[proteinId].value,
-      lipid: response.data.foods[0].foodNutrients[lipidId].value,
-      Carbohydrate: response.data.foods[0].foodNutrients[carbohydrateId].value,
-      Calory: response.data.foods[0].foodNutrients[caloryId].value,
-      fiber: response.data.foods[0].foodNutrients[fiberId].value,
+      protein: protein,
+      lipid: lipid,
+      carbohydrate: carbohydrate,
+      calory: calory,
+      fiber: fiber,
       imageURL: foods.imageURL
     }
     await admin
@@ -166,11 +199,11 @@ router.get('/records/:uid', auth.verifyLogin, function (req, res, next) {
         nameFood: doc.data().nameFood,
         dateRecord: doc.data().dateRecord,
         protein: doc.data().protein,
-        calory: doc.data().Calory,
+        calory: doc.data().calory,
         lipid: doc.data().lipid,
         fiber: doc.data().fiber,
         water: doc.data().Water,
-        carbohydrate: doc.data().Carbohydrate,
+        carbohydrate: doc.data().carbohydrate,
         imageURL: doc.data().imageURL
       }
       arrayJson.push(finalData)
@@ -199,9 +232,9 @@ router.get(
         nameFood: snapshot.data().nameFood,
         dateRecord: snapshot.data().dateRecord,
         protein: snapshot.data().protein,
-        calory: snapshot.data().Calory,
+        calory: snapshot.data().calory,
         lipid: snapshot.data().lipid,
-        carbohydrate: snapshot.data().Carbohydrate,
+        carbohydrate: snapshot.data().carbohydrate,
         fiber: snapshot.data().fiber,
         imageURL: snapshot.data().imageURL,
         dateRecord: snapshot.data().dateRecord
@@ -232,9 +265,9 @@ router.get(
           nameFood: doc.data().nameFood,
           dateRecord: doc.data().dateRecord,
           protein: doc.data().protein,
-          calory: doc.data().Calory,
+          calory: doc.data().calory,
           lipid: doc.data().lipid,
-          carbohydrate: doc.data().Carbohydrate,
+          carbohydrate: doc.data().carbohydrate,
           fiber: doc.data().fiber,
           imageURL: doc.data().imageURL
         }
@@ -272,19 +305,19 @@ router.get('/dashboard/:uid', auth.verifyLogin, function (req, res, next) {
       .get()
     let arrayJson = []
     snapshot.docs.forEach((doc) => {
-      totalCalory = totalCalory + doc.data().Calory
+      totalCalory = totalCalory + doc.data().calory
       totalFat = totalFat + doc.data().lipid
       totalProtein = totalProtein + doc.data().protein
-      totalCarbohydrate = totalCarbohydrate + doc.data().Carbohydrate
+      totalCarbohydrate = totalCarbohydrate + doc.data().carbohydrate
       totalFiber = totalFiber + doc.data().fiber
       const finalData = {
         recordId: doc.id,
         nameFood: doc.data().nameFood,
         dateRecord: doc.data().dateRecord,
         protein: doc.data().protein,
-        calory: doc.data().Calory,
+        calory: doc.data().calory,
         lipid: doc.data().lipid,
-        carbohydrate: doc.data().Carbohydrate,
+        carbohydrate: doc.data().carbohydrate,
         fiber: doc.data().fiber,
         imageURL: doc.data().imageURL
       }
@@ -327,7 +360,7 @@ router.get('/dashboard/:uid', auth.verifyLogin, function (req, res, next) {
           100
       }
     })
-    console.log(totalNutrientsNeeds)
+    console.log(totalFiber)
     const finalDashboardData = {
       date: todayDate,
       caloryPerc: percCalory,
