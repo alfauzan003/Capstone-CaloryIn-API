@@ -233,7 +233,7 @@ router.get(
 )
 // get Dashboard data
 router.get(
-  '/records/:uid/dashboard',
+  '/dashboard/:uid',
   auth.verifyLogin,
   function (req, res, next) {
     let todayDate = getDate()

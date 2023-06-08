@@ -276,5 +276,4 @@ router.put('/update/:uid', async (req, res, next) => {
   updateUser().then((user) => res.send(user))
 })
 
-
 module.exports = router
