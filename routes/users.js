@@ -28,41 +28,49 @@ router.post('/register', async (req, res, next) => {
         var proteinNeed = 50
         var fatNeed = 65
         var carbohydrateNeed = 300
+        var fiberNeed = 28
       } else if(age >= 13 && age <= 15){
         var caloryNeed = 2400
         var proteinNeed = 70
         var fatNeed = 80
         var carbohydrateNeed = 350
+        var fiberNeed = 34
       } else if(age >= 16 && age <= 18){
         var caloryNeed = 2650
         var proteinNeed = 75
         var fatNeed = 85
         var carbohydrateNeed = 400
+        var fiberNeed = 37
       } else if(age >= 19 && age <= 29){
         var caloryNeed = 2650
         var proteinNeed = 65
         var fatNeed = 75
         var carbohydrateNeed = 430
+        var fiberNeed = 37
       } else if(age >= 30 && age <= 49){
         var caloryNeed = 2550
         var proteinNeed = 65
         var fatNeed = 70
         var carbohydrateNeed = 415
+        var fiberNeed = 36
       } else if(age >= 50 && age <= 64){
         var caloryNeed = 2150
         var proteinNeed =65
         var fatNeed = 60
         var carbohydrateNeed = 340
+        var fiberNeed = 30
       } else if(age >= 65 && age <= 80){
         var caloryNeed = 1800
         var proteinNeed = 64
         var fatNeed = 50
         var carbohydrateNeed = 275
+        var fiberNeed = 25
       } else if(age > 80){
         var caloryNeed = 1600
         var proteinNeed = 64
         var fatNeed = 45
         var carbohydrateNeed = 235
+        var fiberNeed = 22
       } 
     } else if (gender=='female' || 'perempuan' || 'wanita'){
       if(age >= 10 && age <= 12){
@@ -70,41 +78,49 @@ router.post('/register', async (req, res, next) => {
         var proteinNeed = 55
         var fatNeed = 65
         var carbohydrateNeed = 280
+        var fiberNeed = 27
       } else if(age >= 13 && age <= 15){
         var caloryNeed = 2050
         var proteinNeed = 65
         var fatNeed = 70
         var carbohydrateNeed = 300
+        var fiberNeed = 29
       } else if(age >= 16 && age <= 18){
         var caloryNeed = 2100
         var proteinNeed = 65
         var fatNeed = 70
         var carbohydrateNeed = 300
+        var fiberNeed = 29
       } else if(age >= 19 && age <= 29){
         var caloryNeed = 2250
         var proteinNeed = 60
         var fatNeed = 65
         var carbohydrateNeed = 360
+        var fiberNeed = 32
       } else if(age >= 30 && age <= 49){
         var caloryNeed = 2150
         var proteinNeed = 60
         var fatNeed = 60
         var carbohydrateNeed = 340
+        var fiberNeed = 30
       } else if(age >= 50 && age <= 64){
         var caloryNeed = 1800
         var proteinNeed =60
         var fatNeed = 50
         var carbohydrateNeed = 280
+        var fiberNeed = 25
       } else if(age >= 65 && age <= 80){
         var caloryNeed = 1550
         var proteinNeed = 58
         var fatNeed = 45
         var carbohydrateNeed = 230
+        var fiberNeed = 22
       } else if(age > 80){
         var caloryNeed = 1400
         var proteinNeed = 58
         var fatNeed = 40
         var carbohydrateNeed = 200
+        var fiberNeed = 20
       }
     }
 
@@ -120,6 +136,7 @@ router.post('/register', async (req, res, next) => {
       proteinNeed: proteinNeed,
       fatNeed: fatNeed,
       carbohydrateNeed: carbohydrateNeed,
+      fiberNeed: fiberNeed,
     }
     
     await admin
@@ -139,11 +156,17 @@ router.get('/:uid', auth.verifyLogin, async (req, res, next) => {
       .collection('users')
       .doc(req.params.uid)
       .get()
+
+    const birthDate = snapshot.data().birthDate
+    var epoch = new Date(0)
+    epoch.setUTCSeconds(birthDate.seconds)
+    var birthDateFormat = epoch.toISOString().slice(0,10)
+
     const user = {
       uid: snapshot.data().uid,
       name: snapshot.data().name,
       email: snapshot.data().email,
-      birthDate: snapshot.data().birthDate,
+      birthDate: birthDateFormat,
       gender: snapshot.data().gender,
       height: snapshot.data().height,
       weight: snapshot.data().weight,
@@ -151,6 +174,7 @@ router.get('/:uid', auth.verifyLogin, async (req, res, next) => {
       proteinNeed: snapshot.data().proteinNeed,
       fatNeed: snapshot.data().fatNeed,
       carbohydrateNeed: snapshot.data().carbohydrateNeed,
+      fiberNeed: snapshot.data().fiberNeed,
     }
     console.log(user)
     return user
@@ -173,41 +197,49 @@ router.put('/update/:uid', async (req, res, next) => {
         var proteinNeed = 50
         var fatNeed = 65
         var carbohydrateNeed = 300
+        var fiberNeed = 28
       } else if(age >= 13 && age <= 15){
         var caloryNeed = 2400
         var proteinNeed = 70
         var fatNeed = 80
         var carbohydrateNeed = 350
+        var fiberNeed = 34
       } else if(age >= 16 && age <= 18){
         var caloryNeed = 2650
         var proteinNeed = 75
         var fatNeed = 85
         var carbohydrateNeed = 400
+        var fiberNeed = 37
       } else if(age >= 19 && age <= 29){
         var caloryNeed = 2650
         var proteinNeed = 65
         var fatNeed = 75
         var carbohydrateNeed = 430
+        var fiberNeed = 37
       } else if(age >= 30 && age <= 49){
         var caloryNeed = 2550
         var proteinNeed = 65
         var fatNeed = 70
         var carbohydrateNeed = 415
+        var fiberNeed = 36
       } else if(age >= 50 && age <= 64){
         var caloryNeed = 2150
         var proteinNeed =65
         var fatNeed = 60
         var carbohydrateNeed = 340
+        var fiberNeed = 30
       } else if(age >= 65 && age <= 80){
         var caloryNeed = 1800
         var proteinNeed = 64
         var fatNeed = 50
         var carbohydrateNeed = 275
+        var fiberNeed = 25
       } else if(age > 80){
         var caloryNeed = 1600
         var proteinNeed = 64
         var fatNeed = 45
         var carbohydrateNeed = 235
+        var fiberNeed = 22
       } 
     } else if (gender=='female' || 'perempuan' || 'wanita'){
       if(age >= 10 && age <= 12){
@@ -215,41 +247,49 @@ router.put('/update/:uid', async (req, res, next) => {
         var proteinNeed = 55
         var fatNeed = 65
         var carbohydrateNeed = 280
+        var fiberNeed = 27
       } else if(age >= 13 && age <= 15){
         var caloryNeed = 2050
         var proteinNeed = 65
         var fatNeed = 70
         var carbohydrateNeed = 300
+        var fiberNeed = 29
       } else if(age >= 16 && age <= 18){
         var caloryNeed = 2100
         var proteinNeed = 65
         var fatNeed = 70
         var carbohydrateNeed = 300
+        var fiberNeed = 29
       } else if(age >= 19 && age <= 29){
         var caloryNeed = 2250
         var proteinNeed = 60
         var fatNeed = 65
         var carbohydrateNeed = 360
+        var fiberNeed = 32
       } else if(age >= 30 && age <= 49){
         var caloryNeed = 2150
         var proteinNeed = 60
         var fatNeed = 60
         var carbohydrateNeed = 340
+        var fiberNeed = 30
       } else if(age >= 50 && age <= 64){
         var caloryNeed = 1800
         var proteinNeed =60
         var fatNeed = 50
         var carbohydrateNeed = 280
+        var fiberNeed = 25
       } else if(age >= 65 && age <= 80){
         var caloryNeed = 1550
         var proteinNeed = 58
         var fatNeed = 45
         var carbohydrateNeed = 230
+        var fiberNeed = 22
       } else if(age > 80){
         var caloryNeed = 1400
         var proteinNeed = 58
         var fatNeed = 40
         var carbohydrateNeed = 200
+        var fiberNeed = 20
       }
     }
 

@@ -111,13 +111,21 @@ router.post('/records/:uid', auth.verifyLogin, async (req, res, next) => {
         var caloryId = i
       }
     }
+    for (var i = 0; i < jsonData.foods[0].foodNutrients.length; i++) {
+      if (jsonData.foods[0].foodNutrients[i].nutrientName == 'Fiber, total dietary') {
+        var fiberId = i
+      }
+    }
+
+
     const dataFood = {
-      nameFood: response.data.foods[0].description,
+      nameFood: req.body.food,
       dateRecord: foods.dateRecord,
       protein: response.data.foods[0].foodNutrients[proteinId].value,
       lipid: response.data.foods[0].foodNutrients[lipidId].value,
       Carbohydrate: response.data.foods[0].foodNutrients[carbohydrateId].value,
       Calory: response.data.foods[0].foodNutrients[caloryId].value,
+      fiber: response.data.foods[0].foodNutrients[fiberId].value,
       imageURL: foods.imageURL
     }
     await admin
@@ -158,6 +166,8 @@ router.get('/records/:uid', auth.verifyLogin, function (req, res, next) {
         protein: doc.data().protein,
         calory: doc.data().Calory,
         lipid: doc.data().lipid,
+        fiber: doc.data().fiber,
+        water: doc.data().Water,
         carbohydrate: doc.data().Carbohydrate,
         imageURL: doc.data().imageURL
       }
@@ -190,6 +200,7 @@ router.get(
         calory: snapshot.data().Calory,
         lipid: snapshot.data().lipid,
         carbohydrate: snapshot.data().Carbohydrate,
+        fiber: snapshot.data().fiber,
         imageURL: snapshot.data().imageURL,
         dateRecord: snapshot.data().dateRecord
       }
@@ -222,6 +233,7 @@ router.get(
           calory: doc.data().Calory,
           lipid: doc.data().lipid,
           carbohydrate: doc.data().Carbohydrate,
+          fiber: doc.data().fiber,
           imageURL: doc.data().imageURL
         }
         arrayJson.push(finalData)
@@ -271,6 +283,7 @@ router.get(
           calory: doc.data().Calory,
           lipid: doc.data().lipid,
           carbohydrate: doc.data().Carbohydrate,
+          fiber: doc.data().fiber,
           imageURL: doc.data().imageURL
         }
 
