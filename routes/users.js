@@ -157,28 +157,35 @@ router.get('/:uid', auth.verifyLogin, async (req, res, next) => {
       .doc(req.params.uid)
       .get()
 
-    const birthDate = snapshot.data().birthDate
-    var epoch = new Date(0)
-    epoch.setUTCSeconds(birthDate.seconds)
-    var birthDateFormat = epoch.toISOString().slice(0,10)
+      if(!snapshot.exists){
+        res.status(404).send({message: 'User not found'})
+      } else {
+        const birthDate = snapshot.data().birthDate
+        var epoch = new Date(0)
+        epoch.setUTCSeconds(birthDate.seconds)
+        var birthDateFormat = epoch.toISOString().slice(0, 10)
 
-    const user = {
-      uid: snapshot.data().uid,
-      name: snapshot.data().name,
-      email: snapshot.data().email,
-      birthDate: birthDateFormat,
-      gender: snapshot.data().gender,
-      height: snapshot.data().height,
-      weight: snapshot.data().weight,
-      caloryNeed: snapshot.data().caloryNeed,
-      proteinNeed: snapshot.data().proteinNeed,
-      fatNeed: snapshot.data().fatNeed,
-      carbohydrateNeed: snapshot.data().carbohydrateNeed,
-      fiberNeed: snapshot.data().fiberNeed,
-    }
-    console.log(user)
-    return user
+        const user = {
+          uid: snapshot.data().uid,
+          name: snapshot.data().name,
+          email: snapshot.data().email,
+          birthDate: birthDateFormat,
+          gender: snapshot.data().gender,
+          height: snapshot.data().height,
+          weight: snapshot.data().weight,
+          caloryNeed: snapshot.data().caloryNeed,
+          proteinNeed: snapshot.data().proteinNeed,
+          fatNeed: snapshot.data().fatNeed,
+          carbohydrateNeed: snapshot.data().carbohydrateNeed,
+          fiberNeed: snapshot.data().fiberNeed,
+        }
+        console.log(user)
+      res.status(200).send(user)
+      }
+
+    
   }
+
   getUser().then((user) => res.send(user))
 })
 

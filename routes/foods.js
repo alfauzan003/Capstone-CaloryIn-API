@@ -190,6 +190,7 @@ router.get('/records/:uid', auth.verifyLogin, function (req, res, next) {
       .collection('users')
       .doc(req.params.uid)
       .collection('records')
+      .orderBy('dateRecord', 'desc')
       .limit(limit)
       .offset(offset)
       .get()
@@ -242,6 +243,25 @@ router.get(
       return finalData
     }
     getRecord().then((user) => res.send(user))
+  }
+)
+
+// Delete specific record by UID
+router.delete(
+  '/records/:uid/:recordId',
+  auth.verifyLogin,
+  function (req, res, next) {
+    async function deleteRecord() {
+      const snapshot = await admin
+        .firestore()
+        .collection('users')
+        .doc(req.params.uid)
+        .collection('records')
+        .doc(req.params.recordId)
+        .delete()
+      return snapshot
+    }
+    deleteRecord().then((user) => res.send(user))
   }
 )
 
