@@ -135,7 +135,8 @@ router.post('/records/:uid', auth.verifyLogin, async (req, res, next) => {
     }
 
     if (response.data.foods[0].foodNutrients[carbohydrateId].value) {
-      var carbohydrate = response.data.foods[0].foodNutrients[carbohydrateId].value 
+      var carbohydrate =
+        response.data.foods[0].foodNutrients[carbohydrateId].value
     } else {
       var carbohydrate = 0
     }
@@ -151,7 +152,6 @@ router.post('/records/:uid', auth.verifyLogin, async (req, res, next) => {
     } else {
       var fiber = 0
     }
-
 
     const dataFood = {
       nameFood: req.body.food,
@@ -313,6 +313,12 @@ router.get('/dashboard/:uid', auth.verifyLogin, function (req, res, next) {
   let percFat
   let percFiber
 
+  let dataCalory
+  let dataCarbohydrate
+  let dataProtein
+  let dataFat
+  let dataFiber
+
   let totalNutrientsNeeds
   let totalNutrients
   async function getRecord() {
@@ -325,11 +331,58 @@ router.get('/dashboard/:uid', auth.verifyLogin, function (req, res, next) {
       .get()
     let arrayJson = []
     snapshot.docs.forEach((doc) => {
-      totalCalory = totalCalory + doc.data().calory
-      totalFat = totalFat + doc.data().lipid
-      totalProtein = totalProtein + doc.data().protein
-      totalCarbohydrate = totalCarbohydrate + doc.data().carbohydrate
-      totalFiber = totalFiber + doc.data().fiber
+      if (
+        doc.data().calory == undefined ||
+        doc.data().calory == null ||
+        doc.data().calory == NaN
+      ) {
+        dataCalory = 0
+      } else {
+        dataCalory = doc.data().calory
+      }
+      if (
+        doc.data().protein == undefined ||
+        doc.data().protein == null ||
+        doc.data().protein == NaN
+      ) {
+        dataProtein = 0
+      } else {
+        dataProtein = doc.data().protein
+      }
+      if (
+        doc.data().lipid == undefined ||
+        doc.data().lipid == null ||
+        doc.data().lipid == NaN
+      ) {
+        dataFat = 0
+      } else {
+        dataFat = doc.data().lipid
+      }
+      if (
+        doc.data().carbohydrate == undefined ||
+        doc.data().carbohydrate == null ||
+        doc.data().carbohydrate == NaN
+      ) {
+        dataCarbohydrate = 0
+      } else {
+        dataCarbohydrate = doc.data().carbohydrate
+      }
+      if (
+        doc.data().fiber == undefined ||
+        doc.data().fiber == null ||
+        doc.data().fiber == NaN
+      ) {
+        dataFiber = 0
+      } else {
+        dataFiber = doc.data().fiber
+      }
+
+      totalCalory = totalCalory + dataCalory
+      totalFat = totalFat + dataFat
+      totalProtein = totalProtein + dataProtein
+      totalCarbohydrate = totalCarbohydrate + dataCarbohydrate
+      totalFiber = totalFiber + dataFiber
+
       const finalData = {
         recordId: doc.id,
         nameFood: doc.data().nameFood,
@@ -344,7 +397,7 @@ router.get('/dashboard/:uid', auth.verifyLogin, function (req, res, next) {
 
       arrayJson.push(finalData)
     })
-    // console.log('Total Calory: ' + totalCalory)
+    // console.log('Total Calory: ' + doc.data().calory)
     // console.log('Total Carbohydrate: ' + totalCarbohydrate)
     // console.log('Total Protein: ' + totalProtein)
     // console.log('Total Fat: ' + totalFat)
